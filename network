@@ -1,0 +1,79 @@
+import numpy as np
+
+# Define the number of inputs, hidden units, and outputs.
+num_inputs = 784
+num_hidden = 128
+num_outputs = 10
+
+# Initialize the weights and biases.
+weights_input_to_hidden = np.random.randn(num_inputs, num_hidden)
+biases_input_to_hidden = np.random.randn(num_hidden)
+weights_hidden_to_output = np.random.randn(num_hidden, num_outputs)
+biases_hidden_to_output = np.random.randn(num_outputs)
+
+# Define the activation function.
+def sigmoid(x):
+  return 1 / (1 + np.exp(-x))
+
+# Define the forward pass.
+def forward_pass(x):
+  # Compute the hidden layer activations.
+  hidden_activations = sigmoid(np.dot(x, weights_input_to_hidden) + biases_input_to_hidden)
+
+  # Compute the output layer activations.
+  output_activations = sigmoid(np.dot(hidden_activations, weights_hidden_to_output) + biases_hidden_to_output)
+
+  return output_activations
+def get_random_batch(x, y):
+  # Get the number of samples in the dataset.
+  n_samples = x.shape[0]
+
+  # Choose a random index for the start of the batch.
+  start_index = np.random.randint(0, n_samples - batch_size)
+
+  # Get the end index of the batch.
+  end_index = start_index + batch_size
+
+  # Return the batch of data.
+  return x[start_index:end_index], y[start_index:end_index]
+# Define the loss function.
+def loss(y_pred, y_true):
+  # Compute the cross-entropy loss.
+  return -np.sum(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
+
+# Define the gradient descent optimizer.
+def gradient_descent(x, y, learning_rate):
+  # Compute the gradients of the loss function with respect to the weights and biases.
+  gradients_weights_input_to_hidden = np.dot(x.T, (y_pred - y_true) * sigmoid(np.dot(x, weights_input_to_hidden) + biases_input_to_hidden))
+  gradients_biases_input_to_hidden = np.sum((y_pred - y_true) * sigmoid(np.dot(x, weights_input_to_hidden) + biases_input_to_hidden), axis=0)
+  gradients_weights_hidden_to_output = np.dot(hidden_activations.T, (y_pred - y_true) * sigmoid(np.dot(hidden_activations, weights_hidden_to_output) + biases_hidden_to_output))
+  gradients_biases_hidden_to_output = np.sum((y_pred - y_true) * sigmoid(np.dot(hidden_activations, weights_hidden_to_output) + biases_hidden_to_output), axis=0)
+
+  # Update the weights and biases.
+  weights_input_to_hidden -= learning_rate * gradients_weights_input_to_hidden
+  biases_input_to_hidden -= learning_rate * gradients_biases_input_to_hidden
+  weights_hidden_to_output -= learning_rate * gradients_weights_hidden_to_output
+  biases_hidden_to_output -= learning_rate * gradients_biases_hidden_to_output
+
+# Train the neural network.
+for i in range(1000):
+  # Get a random batch of data.
+  x_batch, y_batch = get_random_batch(x_train, y_train)
+
+  # Forward pass.
+  y_pred = forward_pass(x_batch)
+
+  # Compute the loss.
+  loss_value = loss(y_pred, y_batch)
+
+  # Gradient descent.
+  gradient_descent(x_batch, y_batch, learning_rate)
+
+  # Print the loss every 100 iterations.
+  if i % 100 == 0:
+    print("Loss after iteration {}: {}".format(i, loss_value))
+
+# Evaluate the neural network on the test set.
+y_pred = forward_pass(x_test)
+accuracy = np.mean(y_pred == y_test)
+print("Accuracy on the test set: {}".format(accuracy))
